@@ -1,2 +1,2 @@
 # RG119-pacman
-PACMAN
+pacman
