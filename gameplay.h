@@ -34,6 +34,7 @@ static void on_display(void);
 static void on_reshape(int new_width, int new_height);
 static void init_game(void);
 
+ 
 
 
 static void on_keyboard(unsigned char key, int x, int y)
@@ -42,9 +43,37 @@ static void on_keyboard(unsigned char key, int x, int y)
     case 27:   
         exit(0);
         break;
+    case 'A':
+    case 'a':  
+        //left
+        wanted_direction[0] = 0;
+        wanted_direction[1] = -1;
+        break;
+    case 'W':
+    case 'w':   
+        wanted_direction[0] = -1;
+        wanted_direction[1] = 0;        
+        //up
+        break;
+    case 'D':
+    case 'd':   
+        wanted_direction[0] = 0;
+        wanted_direction[1] = 1;        
+        //right
+        break;
+    case 'S':
+    case 's':   
+        wanted_direction[0] = 1;
+        wanted_direction[1] = 0;     
+        //down
+        break;
+    case 13:
+        //start game
+        break;
     }
     glutPostRedisplay();
 }
+
 
 static void on_display(void) {
     game_timer++;
@@ -54,7 +83,7 @@ static void on_display(void) {
     glLoadIdentity();
     gluLookAt(EYEX, EYEY, EYEZ, CENTERX, CENTERY, CENTERZ, UPX, UPY, UPZ);
 
-        
+        set_pacman_moves();
 		draw_axis();
     	draw_board();
         draw_pacman(rot_ply);
@@ -79,6 +108,18 @@ static void init_game(void) {
     glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_MULTISAMPLE);
+
+    game_timer = 0;
+    anim_param = 0;
+
+    position[0] = 28;
+    position[1] = 2;
+
+    next_position[0] = 0;
+    next_position[1] = 0;
+
+    wanted_direction[0] = 0;
+    wanted_direction[1] = 0;
     
     glPointSize(POINT_SIZE);
     glLineWidth(LINE_WIDTH); 

@@ -8,6 +8,9 @@ extern int rot_ply;
 extern float anim_param;
 
 
+
+
+
 // function to draw axis
 static void draw_line(int x, int y, int z, int length) {
     glBegin(GL_LINES);
@@ -33,6 +36,8 @@ static void set_board_position(int x, int y) {
     glTranslatef(-x-1,-y,-2);
 }
 
+/* iterate through board matrix(0, 1, 2)
+2 = sphere to draw */
 static void draw_board() { 
     int i, j;
 
@@ -43,6 +48,29 @@ static void draw_board() {
     
 }
 
+static void update_values(int indicator) {
+    if(indicator) {
+        next_position[0] = wanted_direction[0];
+        next_position[1] = wanted_direction[1];
+
+        rot_ply =- wanted_direction[0]*90;
+        rot_ply += wanted_direction[1] == -1 ? 180:0;
+    }
+    else {
+        position[0] += next_position[0];
+        position[1] += next_position[1];
+        board[position[0]][position[1]] = 1;
+    }
+}
+
+
+static void set_pacman_moves() {
+    if (board[position[0] + wanted_direction[0]][position[1] + wanted_direction[1]] > 0)
+        update_values(1);
+
+    if(game_timer % 5 == 0 && board[position[0] + next_position[0]][position[1] + next_position[1]] > 0) 
+        update_values(0);
+}
 
 static void draw_pacman(int rot)
 {   
@@ -92,7 +120,7 @@ static void draw_pacman(int rot)
             glutSolidSphere(0.35,20,20);
             glTranslatef(0.2,0,0.1);
                 glColor3f(0,0,0);
-                glutSolidSphere(.18,10,10);
+                glutSolidSphere(0.18,10,10);
             glTranslatef(-0.2,0,-0.1);
         glTranslatef(-1.1,0.4,-0.5);
 
