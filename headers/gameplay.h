@@ -9,10 +9,10 @@
 /* look at point */
 #define EYEX 60
 #define EYEY 30
-#define EYEZ 30
+#define EYEZ 40
 
-#define CENTERX 30
-#define CENTERY 20
+#define CENTERX 40
+#define CENTERY 30
 #define CENTERZ 0
 
 #define UPX 0
@@ -33,8 +33,11 @@ static void on_keyboard(unsigned char key, int x, int y);
 static void on_display(void);
 static void on_reshape(int new_width, int new_height);
 static void init_game(void);
+static void set_light_and_material(void);
 
- 
+static void set_light_and_material(void) {
+    // TODO
+}
 
 
 static void on_keyboard(unsigned char key, int x, int y)
@@ -85,7 +88,8 @@ static void on_display(void) {
 
         set_pacman_moves();
 		draw_axis();
-    	draw_board();
+    //	draw_board();
+        draw_wall_and_map();
         draw_pacman(rot_ply);
 
     glutPostRedisplay();
@@ -108,6 +112,8 @@ static void init_game(void) {
     glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_MULTISAMPLE);
+
+    set_light_and_material();
 
     game_timer = 0;
     anim_param = 0;

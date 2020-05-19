@@ -1,6 +1,6 @@
 #include <GL/glut.h>
 
-#include "gameplay.h"
+#include "../headers/gameplay.h"
 
 int width, height;
 

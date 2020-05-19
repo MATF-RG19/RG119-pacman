@@ -1,4 +1,5 @@
 #include "constants.h"
+#include <math.h>
 
 extern int position[2];
 extern int next_position[2];
@@ -7,9 +8,10 @@ extern int game_timer;
 extern int rot_ply;
 extern float anim_param;
 
+#define PI 3.141592653589793238
+#define EPS 0.2
 
-
-
+#define WALL_HIGH 2.5
 
 // function to draw axis
 static void draw_line(int x, int y, int z, int length) {
@@ -126,4 +128,115 @@ static void draw_pacman(int rot)
 
     glTranslatef(-position[0],-position[1],-2);
 
+}
+
+
+void set_normal_and_vertex(float u, float v, float r) {
+    glNormal3f(sin(v),cos(v),0);
+    glVertex3f(r*sin(v),r*cos(v),u);
+}
+
+void draw_wall_y() {    
+    glBegin(GL_POLYGON);
+        glVertex3f(0,0,0);
+         glNormal3f(1,0,0);
+        glVertex3f(0,0,WALL_HIGH);
+        glVertex3f(0,1,WALL_HIGH);
+        glVertex3f(0,1,0);
+    glEnd();
+                  
+    
+}
+void draw_wall_x() {
+    glBegin(GL_POLYGON);
+        glVertex3f(0,0,0);
+        glNormal3f(0,1,0);
+        glVertex3f(0,0,WALL_HIGH);
+        glVertex3f(1,0,WALL_HIGH);
+        glVertex3f(1,0,0);
+    glEnd();
+}
+
+void draw_pillar(float from, float to) {
+    float l = 2.2;
+    float r = 1;
+    float u, v;
+    glPushMatrix();
+    for (u = 0; u < l-.35; u += 0.1) {
+        glBegin(GL_TRIANGLE_STRIP);
+        for (v = from; v <= to + EPS; v += PI / 20) {
+            set_normal_and_vertex(u, v, r);
+            set_normal_and_vertex(u + PI / 20, v,r);
+        }
+        glEnd();
+    }
+    glPopMatrix();
+}
+
+void draw_wall_and_map() {
+    
+    int i, j;
+    
+    for (i = 0; i < 67; i++){
+        for (j = 0; j < 67; j++){
+           
+            switch (board[i][j]){
+            case 2 :
+                glTranslatef(i,j,2);
+                    glColor3f(1, 1, 0.3);
+                    glutSolidSphere(.2,10,10);
+                glTranslatef(-i,-j,-2);
+                break;
+                
+            case 3 :
+                glTranslatef(i,j,2);
+                    glColor3f(1, 1, 1);
+                    glutSolidSphere(.4,10,10);
+                glTranslatef(-i,-j,-2);
+                break;
+                
+            case 9 :
+                glTranslatef(i,j,0);
+                    glColor3f(0.2, 0, 0.8);
+                    draw_wall_y();
+                glTranslatef(-i,-j,0);
+                break;
+            case 8 :
+                glTranslatef(i,j,0);
+                    glColor3f(0.2, 0, 0.8);
+                    draw_wall_x();
+                glTranslatef(-i,-j,0);
+                break;
+            
+            case 7 :
+                glTranslatef(i-1,j+1,0);
+                    glColor3f(0.2, 0, 0.8);
+                    draw_pillar(PI/2,PI);
+                glTranslatef(-i+1,-j-1,0);
+                break;
+            case 6 :
+                glTranslatef(i-1,j-1,0);
+                    glColor3f(0.2, 0, 0.8);
+                    draw_pillar(0,PI/2);
+                glTranslatef(-i+1,-j+1,0);
+                break;
+            case 5 :
+                glTranslatef(i+1,j-1,0);
+                    glColor3f(0.2, 0, 0.8);
+                    draw_pillar(3*PI/2, 2*PI);
+                glTranslatef(-i-1,-j+1,0);
+                break;    
+            case 4 :
+                glTranslatef(i+1,j+1,0);
+                    glColor3f(0.2, 0, 0.8);
+                    draw_pillar(PI,3*PI/2);
+                glTranslatef(-i-1,-j-1,0);
+                break;
+                
+            }
+            
+        }
+    }
+    
+    
 }
