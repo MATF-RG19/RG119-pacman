@@ -29,6 +29,7 @@ int game_timer;
 int rot_ply = 0;
 float anim_param;
 
+
 static void on_keyboard(unsigned char key, int x, int y);
 static void on_display(void);
 static void on_reshape(int new_width, int new_height);
@@ -36,7 +37,27 @@ static void init_game(void);
 static void set_light_and_material(void);
 
 static void set_light_and_material(void) {
-    // TODO
+    GLfloat light_position[] = {-100, 100, 100, 0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    
+    GLfloat ambient[] = { 0.2, 0.2, 0.2, 1 };
+    GLfloat diffuse[] = { 0.8, 0.9, 0.8, 1 };
+    GLfloat specular[] = { 0.7, 0.7, 0.7, 1 };
+    GLfloat ambient_coeff[] = { 0.5, 0.4, 0.3, 1 };
+    GLfloat diffuse_coeff[] = { 1, 1, 1, 1 };
+    GLfloat specular_coeff[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat shininess = 50;
+       
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeff);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeff);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeff);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 }
 
 
@@ -89,6 +110,9 @@ static void on_display(void) {
         set_pacman_moves();
 		draw_axis();
     //	draw_board();
+        draw_ghost(ghosts_position[0],ghosts_position[1],1);
+        draw_ghost(ghosts_position[2],ghosts_position[3],2); 
+        draw_ghost(ghosts_position[4],ghosts_position[5],3);
         draw_wall_and_map();
         draw_pacman(rot_ply);
 
@@ -126,6 +150,13 @@ static void init_game(void) {
 
     wanted_direction[0] = 0;
     wanted_direction[1] = 0;
+
+    ghosts_position[0] = 28;
+    ghosts_position[1] = 28;
+    ghosts_position[2] = 28;
+    ghosts_position[3] = 33;
+    ghosts_position[4] = 28;
+    ghosts_position[5] = 38;
     
     glPointSize(POINT_SIZE);
     glLineWidth(LINE_WIDTH); 
