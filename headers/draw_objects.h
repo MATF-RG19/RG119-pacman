@@ -14,7 +14,7 @@ extern float anim_param;
 static void draw_line(int x, int y, int z, int height);
 static void draw_axis(void);
 static void update_values(int indicator);
-static void set_pacman_moves(void);
+static void set_pacman_moves(int ready);
 
 void set_normal_and_vertex(float u, float v, float r);
 void draw_pillar(float from, float to);
@@ -55,14 +55,13 @@ static void update_values(int indicator) {
     }
 }
 
-static void set_pacman_moves() {
+static void set_pacman_moves(int ready) {
     if (board[position[0] + wanted_direction[0]][position[1] + wanted_direction[1]] > 0)
         update_values(1);
 
-    if(game_timer % 5 == 0 && board[position[0] + next_position[0]][position[1] + next_position[1]] > 0) 
+    if(ready == 0 && board[position[0] + next_position[0]][position[1] + next_position[1]] > 0) 
         update_values(0);
 }
-
 
 /* WALL AND MAP SECTION */
 

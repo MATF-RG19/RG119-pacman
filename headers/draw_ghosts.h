@@ -5,7 +5,7 @@ extern int game_timer;
 int ghosts_color[3] = {1,2,3};
 int ghosts_position[6];
 static int ghosts_look[3] = {90,180,-90};
-static int ghosts_dir[6] = {0,1,1,0,0,-1};
+
 
 void draw_eyes(void);
 void draw_eyebrows(void);

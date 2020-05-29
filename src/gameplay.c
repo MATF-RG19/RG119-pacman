@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     glutInitWindowSize(1920,1080);
     glutInitWindowPosition(32, 16);
     glutCreateWindow(argv[0]);
-
+    glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
 
     glutReshapeFunc(on_reshape);
     glutKeyboardFunc(on_keyboard);
