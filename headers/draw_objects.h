@@ -10,6 +10,7 @@ extern int wanted_direction[2];
 extern int game_timer;
 extern int rot_ply;
 extern float anim_param;
+extern int score;
 
 static void draw_line(int x, int y, int z, int height);
 static void draw_axis(void);
@@ -51,6 +52,9 @@ static void update_values(int indicator) {
     else {
         position[0] += next_position[0];
         position[1] += next_position[1];
+        if(board[position[0]][position[1]] == 2) score += 10;
+        if(board[position[0]][position[1]] == 3) score += 100;
+
         board[position[0]][position[1]] = 1;
     }
 }

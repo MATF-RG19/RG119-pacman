@@ -3,6 +3,7 @@
 #include <math.h>
 #include <time.h>
 
+
 #include "image.h"
 
 
@@ -26,8 +27,8 @@
 
 extern int width, height;
 
-
-static char* FILENAME2 = "../floor.bmp"; 
+static char* FILENAME1 = "../textures/intro.bmp";
+static char* FILENAME2 = "../textures/floor.bmp"; 
 static float matrix[16]; 
 static GLuint names[3];
 
@@ -42,6 +43,7 @@ int on_going;
 static int ghosts_dir[6] = {0,1,1,0,0,-1};
 
 int ready = 1;
+int score;
 
 static int view_param;
  
@@ -54,12 +56,47 @@ static void on_reshape(int new_width, int new_height);
 static void on_timer(int value);
 static void init_game(void);
 static void set_light_and_material(void);
+void text(char *t, int h, int w);
 
 void set_camera_and_view(void);
 float min_distance_to_another(int ghost, int x, int y);
 void move_ghost(int ghost);
-
 void load_images(void);
+
+
+void text(char* t, int h, int w) {   
+    // Write text t on display position (h,w)
+    glDisable(GL_LIGHTING); 
+    glColor3f(0, 0.8, 0.9);
+    glPushMatrix();
+        glMatrixMode(GL_PROJECTION); 
+        
+        GLdouble matrix[16];
+        glGetDoublev(GL_PROJECTION_MATRIX, matrix);
+        glLoadIdentity();
+        glOrtho(0, width, 0, height, -3, 3);
+        
+        glMatrixMode(GL_MODELVIEW);
+        
+        glLoadIdentity();
+        glRasterPos2f(h,w); 
+        
+        int i;
+        for( i = 0; t[i]; i++){
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int) t[i]); 
+        }
+        
+        glMatrixMode(GL_PROJECTION);
+        
+        glLoadMatrixd(matrix); 
+        
+        glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    
+    glEnable(GL_LIGHTING);
+}
+
+
 
 
 void load_images() {
@@ -70,6 +107,8 @@ void load_images() {
     image = image_init(0, 0);
 
     glGenTextures(3,names);
+    image_read(image, FILENAME1);
+    glBindTexture(GL_TEXTURE_2D, names[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -90,16 +129,16 @@ void load_images() {
 }
 
 static void set_light_and_material(void) {
-    GLfloat light_position[] = {-100, 100, 100, 0 };
+    GLfloat light_position[] = {60, 80, 20, 0};
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     
     GLfloat ambient[] = { 0.2, 0.2, 0.2, 1 };
-    GLfloat diffuse[] = { 0.8, 0.9, 0.8, 1 };
-    GLfloat specular[] = { 0.7, 0.7, 0.7, 1 };
-    GLfloat ambient_coeff[] = { 0.5, 0.4, 0.3, 1 };
-    GLfloat diffuse_coeff[] = { 1, 1, 1, 1 };
-    GLfloat specular_coeff[] = { 0.1, 0.1, 0.1, 1 };
-    GLfloat shininess = 50;
+    GLfloat diffuse[] = { 1, 1, 1, 1 };
+    GLfloat specular[] = { 0, 0, 0, 1 };
+    GLfloat ambient_coeff[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat diffuse_coeff[] = { 0, 0, 0, 1 };
+    GLfloat specular_coeff[] = { 1, 1, 1, 1 };
+    GLfloat shininess = 0;
        
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -133,7 +172,7 @@ static void on_keyboard(unsigned char key, int x, int y) {
             game_timer = 0;
         }
         if (on_going == -1 || on_going == 2){
-            on_going = 1; // Start new game
+            on_going = 0; // Start new game
             init_game();
         }
         break;
@@ -197,6 +236,22 @@ static void on_display(void) {
 
     set_camera_and_view();
 
+    glEnable(GL_TEXTURE_2D); 
+    glBindTexture(GL_TEXTURE_2D, names[1]);
+    glBegin(GL_QUADS);
+        glNormal3f(1,0,0);
+        glTexCoord2f(0,0);
+            glVertex3f(100,-16,-9);
+        glTexCoord2f(1,0); 
+            glVertex3f(100,16,-9);
+        glTexCoord2f(1,1); 
+            glVertex3f(100,16,9);
+        glTexCoord2f(0,1); 
+            glVertex3f(100,-16,9);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
     // Set floor texture
     glEnable(GL_TEXTURE_2D); 
     glBindTexture(GL_TEXTURE_2D, names[0]);
@@ -252,6 +307,22 @@ static void on_display(void) {
         ghosts_look[i] = ghosts_dir[2*i] == -1 ? 180 : ghosts_look[i];
     }
 
+    char t1[30] = " ";
+    char t2[60] = " ";
+
+    if(on_going !=0)
+        sprintf(t1, "SCORE: %d", score);
+    if(on_going == 2)
+        sprintf(t2, "YOU WIN!");
+    if(on_going == -1)
+        sprintf(t2, "GAME OVER");
+
+    text(t2, 50, height-50);
+    text(t1, width-150, height-50);
+
+    if(score >= 30)
+        on_going == 2;
+
     ready = 1;
  
     glutPostRedisplay();
@@ -269,7 +340,7 @@ static void on_reshape(int new_width, int new_height) {
 }
 
 static void init_game(void) {
-    glClearColor(0.2, 0.3, 0.4, 0);
+    glClearColor(0.1, 0.1, 0.1, 0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
@@ -281,6 +352,7 @@ static void init_game(void) {
     anim_param = 0;
     on_going = 1;
     view_param = 14;
+    score = -10;
 
     position[0] = 28;
     position[1] = 2;
@@ -298,7 +370,7 @@ static void init_game(void) {
     ghosts_position[4] = 28;
     ghosts_position[5] = 38;
     
-    load_images();    
+    load_images();
 }
 
 float min_distance_to_another(int ghost, int x, int y) {
