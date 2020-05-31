@@ -28,7 +28,8 @@
 extern int width, height;
 
 static char* FILENAME1 = "../textures/intro.bmp";
-static char* FILENAME2 = "../textures/floor.bmp"; 
+static char* FILENAME2 = "../textures/floor.bmp";
+static char* FILENAME3 = "../textures/game_over.bmp"; 
 static float matrix[16]; 
 static GLuint names[3];
 
@@ -62,7 +63,61 @@ void set_camera_and_view(void);
 float min_distance_to_another(int ghost, int x, int y);
 void move_ghost(int ghost);
 void load_images(void);
+void set_textures();
 
+
+void set_textures() {
+    if(on_going == -1) {
+    glEnable(GL_TEXTURE_2D); 
+    glBindTexture(GL_TEXTURE_2D, names[2]);
+    glBegin(GL_QUADS);
+        glNormal3f(1,0,0);
+        glTexCoord2f(0,0);
+            glVertex3f(100,-16,-9);
+        glTexCoord2f(1,0); 
+            glVertex3f(100,16,-9);
+        glTexCoord2f(1,1); 
+            glVertex3f(100,16,9);
+        glTexCoord2f(0,1); 
+            glVertex3f(100,-16,9);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+    if(on_going != 1) {
+    glEnable(GL_TEXTURE_2D); 
+    glBindTexture(GL_TEXTURE_2D, names[1]);
+    glBegin(GL_QUADS);
+        glNormal3f(1,0,0);
+        glTexCoord2f(0,0);
+            glVertex3f(100,-16,-9);
+        glTexCoord2f(1,0); 
+            glVertex3f(100,16,-9);
+        glTexCoord2f(1,1); 
+            glVertex3f(100,16,9);
+        glTexCoord2f(0,1); 
+            glVertex3f(100,-16,9);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+    // Set floor texture
+    glEnable(GL_TEXTURE_2D); 
+    glBindTexture(GL_TEXTURE_2D, names[0]);
+    glBegin(GL_QUADS);
+        glNormal3f(0,0,1);
+        glTexCoord2f(0,0);
+            glVertex3f(0,0,0);
+        glTexCoord2f(11,0); 
+            glVertex3f(0,66,0);;
+        glTexCoord2f(11,11); 
+            glVertex3f(62,66,0);
+        glTexCoord2f(0,11); 
+           glVertex3f(62,0,0);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
 
 void text(char* t, int h, int w) {   
     // Write text t on display position (h,w)
@@ -115,6 +170,16 @@ void load_images() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, 
                  GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+
+    image_read(image, FILENAME3);
+    glBindTexture(GL_TEXTURE_2D, names[2]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, 
+                 GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+
     image_read(image, FILENAME2);
     glBindTexture(GL_TEXTURE_2D, names[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -132,12 +197,12 @@ static void set_light_and_material(void) {
     GLfloat light_position[] = {60, 80, 20, 0};
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     
-    GLfloat ambient[] = { 0.2, 0.2, 0.2, 1 };
-    GLfloat diffuse[] = { 1, 1, 1, 1 };
-    GLfloat specular[] = { 0, 0, 0, 1 };
-    GLfloat ambient_coeff[] = { 0.1, 0.1, 0.1, 1 };
-    GLfloat diffuse_coeff[] = { 0, 0, 0, 1 };
-    GLfloat specular_coeff[] = { 1, 1, 1, 1 };
+    GLfloat ambient[] = {0.2, 0.2, 0.2, 1};
+    GLfloat diffuse[] = {1, 1, 1, 1};
+    GLfloat specular[] = {0, 0, 0, 1};
+    GLfloat ambient_coeff[] = {0.1, 0.1, 0.1, 1};
+    GLfloat diffuse_coeff[] = {0, 0, 0, 1};
+    GLfloat specular_coeff[] = {1, 1, 1, 1};
     GLfloat shininess = 0;
        
     glEnable(GL_LIGHTING);
@@ -232,42 +297,8 @@ static void on_display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-
     set_camera_and_view();
-
-    glEnable(GL_TEXTURE_2D); 
-    glBindTexture(GL_TEXTURE_2D, names[1]);
-    glBegin(GL_QUADS);
-        glNormal3f(1,0,0);
-        glTexCoord2f(0,0);
-            glVertex3f(100,-16,-9);
-        glTexCoord2f(1,0); 
-            glVertex3f(100,16,-9);
-        glTexCoord2f(1,1); 
-            glVertex3f(100,16,9);
-        glTexCoord2f(0,1); 
-            glVertex3f(100,-16,9);
-    glEnd();
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-
-    // Set floor texture
-    glEnable(GL_TEXTURE_2D); 
-    glBindTexture(GL_TEXTURE_2D, names[0]);
-    glBegin(GL_QUADS);
-        glNormal3f(0,0,1);
-        glTexCoord2f(0,0);
-            glVertex3f(0,0,0);
-        glTexCoord2f(11,0); 
-            glVertex3f(0,66,0);;
-        glTexCoord2f(11,11); 
-            glVertex3f(62,66,0);
-        glTexCoord2f(0,11); 
-           glVertex3f(62,0,0);
-    glEnd();
-    glBindTexture(GL_TEXTURE_2D, 0);
-    
+    set_textures();
 
     if(on_going == 1) {
         set_pacman_moves(ready);
@@ -312,16 +343,16 @@ static void on_display(void) {
 
     if(on_going !=0)
         sprintf(t1, "SCORE: %d", score);
-    if(on_going == 2)
-        sprintf(t2, "YOU WIN!");
+    if(on_going == 2) {
+        sprintf(t2, "WIN!");
+        on_going = 0;
+    }
     if(on_going == -1)
         sprintf(t2, "GAME OVER");
 
     text(t2, 50, height-50);
     text(t1, width-150, height-50);
 
-    if(score >= 30)
-        on_going == 2;
 
     ready = 1;
  
@@ -347,25 +378,26 @@ static void init_game(void) {
     glEnable(GL_MULTISAMPLE);
 
     set_light_and_material();
-
+    
+    reset_board();
     game_timer = 0;
     anim_param = 0;
-    on_going = 1;
+    on_going = 0;
     view_param = 14;
     score = -10;
 
     position[0] = 28;
     position[1] = 2;
 
-    next_position[0] = 0;
-    next_position[1] = 0;
+    int i;
+    for(i = 0;i<2;i++) {
+    next_position[i] = 0;
+    wanted_direction[i] = 0;
+    }
 
-    wanted_direction[0] = 0;
-    wanted_direction[1] = 0;
+    for(i = 0;i<3;i++)
+        ghosts_position[i] = 28;
 
-    ghosts_position[0] = 28;
-    ghosts_position[1] = 28;
-    ghosts_position[2] = 28;
     ghosts_position[3] = 33;
     ghosts_position[4] = 28;
     ghosts_position[5] = 38;
@@ -395,27 +427,27 @@ void move_ghost(int ghost) {
     int new_y[4] = {0,0,0,0};
     int new_pos_x, new_pos_y;
     
-    if (board[x + 1][y] > 0 && min_distance_to_another(ghost, 1, 0) > 3){
+    if(board[x + 1][y] > 0 && min_distance_to_another(ghost, 1, 0) > 3){
         new_x[count]++;
         count++;
     } 
         
-    if (board[x - 1][y] > 0 && min_distance_to_another(ghost, -1, 0) > 3){
+    if(board[x - 1][y] > 0 && min_distance_to_another(ghost, -1, 0) > 3){
         new_x[count]--;
         count++;
     }
     
-    if (board[x][y + 1] > 0 && min_distance_to_another(ghost, 0, 1) > 3){
+    if(board[x][y + 1] > 0 && min_distance_to_another(ghost, 0, 1) > 3){
         new_y[count]++;
         count++;
     }
     
-    if (board[x][y - 1] > 0 && min_distance_to_another(ghost, 0, -1) > 3 ){
+    if(board[x][y - 1] > 0 && min_distance_to_another(ghost, 0, -1) > 3 ){
         new_y[count]--;
         count++;
     }
         
-    if (count == 0) {
+    if(count == 0) {
         new_pos_x = x;
         new_pos_y = y;
     }
@@ -429,13 +461,13 @@ void move_ghost(int ghost) {
         new_pos_y = y + new_y[rand_coef];
     }
     
-    if (count < 3 && board[x + ghosts_dir[ghost*2-2]][y + ghosts_dir[ghost*2-1]] > 0 
+    if(count < 3 && board[x + ghosts_dir[ghost*2-2]][y + ghosts_dir[ghost*2-1]] > 0 
         && min_distance_to_another(ghost, ghosts_dir[ghost*2-2], ghosts_dir[ghost*2-1]) > 3 ){
         new_pos_x = x + ghosts_dir[ghost*2-2];
         new_pos_y = y + ghosts_dir[ghost*2-1];
         
     }
-      else if (new_pos_x == x && new_pos_y == y) {
+      else if(new_pos_x == x && new_pos_y == y) {
         return;
     }
     else {
@@ -449,7 +481,7 @@ void move_ghost(int ghost) {
 
 void set_camera_and_view() {
 
-if (on_going == 1 && game_timer < 80)
+if(on_going == 1 && game_timer < 80)
         anim_param = game_timer;
     
     // Seting camera and view parametars    

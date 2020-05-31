@@ -17,7 +17,7 @@ void draw_wall_x_side() {
 void draw_wall_y_side() {    
     glBegin(GL_POLYGON);
         glVertex3f(0,0,0);
-         glNormal3f(1,0,0);
+        glNormal3f(1,0,0);
         glVertex3f(0,0,WALL_HIGH);
         glVertex3f(0,1,WALL_HIGH);
         glVertex3f(0,1,0);
