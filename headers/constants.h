@@ -1,10 +1,17 @@
-// FIXME
 #define PI 3.141592653589793238
 #define EPS 0.2
 
 #define TIMER_INTERVAL 40
 #define TIMER_ID 0
 
+/* board definition:
+                    0 - empty field
+                    2 - small coin
+                    3 - big coin
+                    8 - x side wall
+                    9 - y side wall
+                    4,5,6,7 - roundend wall part
+*/  
 static int save_board[67][67]  = {
                 {4,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,0,5,0,4,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,0,5},
                 {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8},
@@ -71,6 +78,7 @@ static int save_board[67][67]  = {
                 {7,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,0,6}
              };
 
+/* save initial bord value and reset when game is finished */
 static int board[67][67];
 
 void reset_board() {

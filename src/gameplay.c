@@ -1,5 +1,5 @@
 #include <GL/glut.h>
-
+// include game functionality header
 #include "../headers/gameplay.h"
 
 int width, height;
@@ -7,7 +7,7 @@ int width, height;
 
 int main(int argc, char **argv)
 {
-	/* setup window parameters */
+	//setup window parameters
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize(1920,1080);
@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     glutCreateWindow(argv[0]);
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
 
+    // callback functions
     glutReshapeFunc(on_reshape);
     glutKeyboardFunc(on_keyboard);
     glutDisplayFunc(on_display);
