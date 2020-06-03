@@ -17,7 +17,9 @@ extern int width, height;
 static char* FILENAME1 = "../textures/intro.bmp";
 static char* FILENAME2 = "../textures/floor.bmp"; 
 
-static float matrix[16]; 
+static float matrix[16];
+
+// textures 
 static GLuint names[3];
 
 int position[2];
@@ -48,6 +50,7 @@ void move_ghost(int ghost);
 void load_images(void);
 void set_textures(void);
 void generate_text(int indicator);
+static void draw_end_screen(void);
 
 /*** COPIED FROM RG #7 ****/
 void set_textures() {
@@ -373,19 +376,19 @@ void move_ghost(int ghost) {
     int new_pos_x, new_pos_y;
     
     /* check all adjacent positions */
-    if(board[x + 1][y] > 0 && min_distance_to_another(ghost, 1, 0) > 3){
+    if(board[x+1][y] > 0 && min_distance_to_another(ghost, 1, 0) > 3){
         new_x[count]++;
         count++;
     }    
-    if(board[x - 1][y] > 0 && min_distance_to_another(ghost, -1, 0) > 3){
+    if(board[x-1][y] > 0 && min_distance_to_another(ghost, -1, 0) > 3){
         new_x[count]--;
         count++;
     }
-    if(board[x][y + 1] > 0 && min_distance_to_another(ghost, 0, 1) > 3){
+    if(board[x][y+1] > 0 && min_distance_to_another(ghost, 0, 1) > 3){
         new_y[count]++;
         count++;
     }
-    if(board[x][y - 1] > 0 && min_distance_to_another(ghost, 0, -1) > 3 ){
+    if(board[x][y-1] > 0 && min_distance_to_another(ghost, 0, -1) > 3 ){
         new_y[count]--;
         count++;
     }
@@ -397,7 +400,7 @@ void move_ghost(int ghost) {
     else { // generate new random position
         clock_t cl = clock();
         double r = cl;
-        srand( cl );
+        srand(cl);
     
         int rand_coef = rand() % count;
         new_pos_x = x + new_x[rand_coef];
@@ -456,4 +459,45 @@ static void init_game(void) {
     ghosts_position[5] = 38;
     
     load_images();
+}
+
+
+static void draw_end_screen(){
+
+    
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, names[1]);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+  
+        gluOrtho2D(0, width, 0, height);
+        
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        glBegin(GL_QUADS);
+            glTexCoord2f(0, 0);
+            glVertex2f(0,0);
+
+            glTexCoord2f(0, 1);
+            glVertex2f(0, height);
+
+            glTexCoord2f(1, 1);
+            glVertex2f(width, height);
+
+            glTexCoord2f(1, 0);
+            glVertex2f(width, 0);
+        glEnd();
+        
+        glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    
+    glMatrixMode(GL_MODELVIEW);
+
+    glDisable(GL_TEXTURE_2D);
+
+
+
 }

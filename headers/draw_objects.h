@@ -5,6 +5,9 @@
 #include "draw_pacman.h"
 #include "draw_ghosts.h"
 
+int activate_colors = 0;
+float time_activated = 20;
+
 extern int position[2];
 extern int next_position[2];
 extern int wanted_direction[2];
@@ -12,6 +15,7 @@ extern int game_timer;
 extern int rot_ply;
 extern float anim_param;
 extern int score;
+
 
 static void update_values(int indicator);
 static void set_pacman_moves(int ready);
@@ -40,9 +44,8 @@ static void update_values(int indicator) {
     else {
         position[0] += next_position[0];
         position[1] += next_position[1];
-        if(board[position[0]][position[1]] == 2) score += 10;
-        if(board[position[0]][position[1]] == 3) score += 100;
-
+        if(board[position[0]][position[1]] == 2) score += 10; // small coin
+        if(board[position[0]][position[1]] == 3) {score += 100; activate_colors = 1; time_activated = 20;} // big coin
         board[position[0]][position[1]] = 1;
     }
 }

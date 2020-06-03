@@ -1,11 +1,19 @@
 #include <math.h>
 #include <time.h>
+#include <stdio.h>
+
+/* changing ghost colors */
+extern int activate_colors;
+extern float time_activated;
+
 
 extern int game_timer;
+
 static int ghosts_look[3] = {90,180,-90};
 
 int ghosts_color[3] = {1,2,3};
 int ghosts_position[6];
+
 
 
 void draw_eyes(void);
@@ -151,10 +159,12 @@ void draw_ghost(int x,int y, int c) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     
+
     /* set ghost color: 1 = red, 2 = green, 3 = blue */
     switch (ghosts_color[c-1]){
         case 0 :
-            glColor4f(0.8,0.8,1,0.9); break;
+            glColor4f(0.8,0.8,1,0.9);
+            break;
         case 1 :
             glColor4f(0.9,0,0,0.9); break;
         case 2 :
@@ -162,6 +172,22 @@ void draw_ghost(int x,int y, int c) {
         case 3 :
             glColor4f(0,0,0.9,0.9); break;
     }
+
+    
+    /* if pacman ate big coin */
+    if(time_activated <= 0) 
+        activate_colors = 0;
+
+    clock_t cl = clock();
+    double r = cl;
+    srand(cl);
+    int activate_c = rand() % 2;
+
+    if(activate_colors == 1 && activate_c == 1) {
+        glColor4f(0.8, 0.7, 0.8, 0.9);
+        time_activated-=0.05;
+    }
+
     glPushMatrix();
         glTranslatef(x,y,2.4);
         glRotatef(ghosts_look[c-1],0,0,1);
