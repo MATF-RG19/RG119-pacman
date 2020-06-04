@@ -11,8 +11,9 @@ extern int game_timer;
 
 static int ghosts_look[3] = {90,180,-90};
 
+// array of ghost colors R,G,B
 int ghosts_color[3] = {1,2,3};
-int ghosts_position[6];
+
 
 
 

@@ -5,6 +5,7 @@
 #include "draw_pacman.h"
 #include "draw_ghosts.h"
 
+// switching ghost colors
 int activate_colors = 0;
 float time_activated = 20;
 

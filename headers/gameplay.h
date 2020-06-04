@@ -22,18 +22,23 @@ static float matrix[16];
 // textures 
 static GLuint names[3];
 
-int position[2];
-int next_position[2];
-int wanted_direction[2];
-int game_timer;
-int rot_ply = 0;
+/* gameplay parameters */
 float anim_param;
+int game_timer;
+static int view_param;
 int on_going;
 int ready = 1;
 int score;
 
+/* pacman positions at the board */
+int position[2];
+int next_position[2];
+int wanted_direction[2];
+int rot_ply = 0; // pacman rotation angle
+
+/* possible ghost directions */
 static int ghosts_dir[6] = {0,1,1,0,0,-1};
-static int view_param;
+int ghosts_position[6];
 
 /* define functions */ 
 static void on_keyboard(unsigned char key, int x, int y);
@@ -50,7 +55,6 @@ void move_ghost(int ghost);
 void load_images(void);
 void set_textures(void);
 void generate_text(int indicator);
-static void draw_end_screen(void);
 
 /*** COPIED FROM RG #7 ****/
 void set_textures() {
@@ -459,45 +463,4 @@ static void init_game(void) {
     ghosts_position[5] = 38;
     
     load_images();
-}
-
-
-static void draw_end_screen(){
-
-    
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, names[1]);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-  
-        gluOrtho2D(0, width, 0, height);
-        
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        glBegin(GL_QUADS);
-            glTexCoord2f(0, 0);
-            glVertex2f(0,0);
-
-            glTexCoord2f(0, 1);
-            glVertex2f(0, height);
-
-            glTexCoord2f(1, 1);
-            glVertex2f(width, height);
-
-            glTexCoord2f(1, 0);
-            glVertex2f(width, 0);
-        glEnd();
-        
-        glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    
-    glMatrixMode(GL_MODELVIEW);
-
-    glDisable(GL_TEXTURE_2D);
-
-
-
 }
