@@ -55,6 +55,7 @@ void move_ghost(int ghost);
 void load_images(void);
 void set_textures(void);
 void generate_text(int indicator);
+void update_all_move_values(void);
 
 /*** COPIED FROM RG #7 ****/
 void set_textures() {
@@ -204,8 +205,10 @@ static void set_light_and_material(void) {
 static void on_timer(int value) {
     if (value != TIMER_ID) return;
     game_timer++;
+
+    update_all_move_values();
+ 
     glutPostRedisplay();
-    
     ready = 0;
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);   
 }
@@ -270,27 +273,15 @@ static void on_keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-
-
-static void on_display(void) {
-    game_timer++;
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    set_camera_and_view();
-    set_textures();
-
+void update_all_move_values(void) {
     if(on_going == 1) {
         set_pacman_moves(ready);
 
         /* allow moving to the other side of the board */
-        if(position[1] < 1 ) 
+        if(position[1] < 1)
             position[1] = 65;
         else if(position[1] > 65)
             position[1] = 1;
-        
 
         /* if game on, draw ghost one by one after some time */
         if(game_timer > 100 && game_timer % 3 == 0)
@@ -302,13 +293,6 @@ static void on_display(void) {
         if (game_timer > 300 && game_timer % 3 == 0)
             move_ghost(3);
     }
-	// set ghosts to right position
-    draw_ghost(ghosts_position[0],ghosts_position[1],1);
-    draw_ghost(ghosts_position[2],ghosts_position[3],2); 
-    draw_ghost(ghosts_position[4],ghosts_position[5],3);
-
-    draw_wall_and_map();
-    draw_pacman(rot_ply);
 
     int i = 0;
     for(; i < 3; i++) {
@@ -325,6 +309,23 @@ static void on_display(void) {
 
     if(score >= GAME_WIN)
         on_going = 2;
+} 
+
+static void on_display(void) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    set_camera_and_view();
+    set_textures();
+
+	// set ghosts to right position
+    draw_ghost(ghosts_position[0],ghosts_position[1],1);
+    draw_ghost(ghosts_position[2],ghosts_position[3],2); 
+    draw_ghost(ghosts_position[4],ghosts_position[5],3);
+
+    draw_wall_and_map();
+    draw_pacman(rot_ply);
 
     generate_text(on_going);
     ready = 1;

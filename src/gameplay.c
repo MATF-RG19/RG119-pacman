@@ -19,6 +19,7 @@ int main(int argc, char **argv)
     glutReshapeFunc(on_reshape);
     glutKeyboardFunc(on_keyboard);
     glutDisplayFunc(on_display);
+    glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);   
 
     init_game();
     
